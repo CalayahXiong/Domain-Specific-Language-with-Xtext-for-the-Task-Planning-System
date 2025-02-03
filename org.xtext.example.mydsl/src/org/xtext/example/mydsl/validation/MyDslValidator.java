@@ -103,11 +103,11 @@ public class MyDslValidator extends AbstractMyDslValidator {
         // get curr model
         Model model = (Model)worker.eContainer();
         // duplicated employee number
-        long count = model.getWorkers().stream().filter(w -> w.getEmployeeNumber() == worker.getEmployeeNumber()).count();
+        long count = model.getWorkers().stream().filter(w -> w.getId().equals(worker.getId())).count();
 
         if (count > 1) {
-            error("Employee number " + worker.getEmployeeNumber() + " has exists.",
-                  MyDslPackage.Literals.WORKER__EMPLOYEE_NUMBER,
+            error("Employee number " + worker.getId() + " has exists.",
+                  MyDslPackage.Literals.WORKER__ID,
                   "DUPLICATE_EMPLOYEE_ID");
         }
     }

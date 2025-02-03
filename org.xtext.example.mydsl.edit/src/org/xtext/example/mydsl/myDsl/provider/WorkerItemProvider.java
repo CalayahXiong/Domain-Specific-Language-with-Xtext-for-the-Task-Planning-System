@@ -126,7 +126,7 @@ public class WorkerItemProvider
 				 getResourceLocator(),
 				 getString("_UI_Worker_employeeNumber_feature"),
 				 getString("_UI_PropertyDescriptor_description", "_UI_Worker_employeeNumber_feature", "_UI_Worker_type"),
-				 MyDslPackage.Literals.WORKER__EMPLOYEE_NUMBER,
+				 MyDslPackage.Literals.WORKER__ID,
 				 true,
 				 false,
 				 false,
@@ -197,7 +197,7 @@ public class WorkerItemProvider
 		switch (notification.getFeatureID(Worker.class)) {
 			case MyDslPackage.WORKER__NAME:
 			case MyDslPackage.WORKER__SENIORITY:
-			case MyDslPackage.WORKER__EMPLOYEE_NUMBER:
+			case MyDslPackage.WORKER__ID:
 			case MyDslPackage.WORKER__IS_ACTIVE:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;

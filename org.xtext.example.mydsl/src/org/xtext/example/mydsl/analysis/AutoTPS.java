@@ -45,9 +45,16 @@ public class AutoTPS {
             
             if (assignedWorker != null) {
                 // When a worker is assigned
-                System.out.println(String.format("Task assignment to %s for task %s",
+            	if (assignments.containsKey(assignedWorker)) {
+                    assignments.get(assignedWorker).add(task);
+                } else {
+                    List<Task> workerTasks = new ArrayList<>();
+                    workerTasks.add(task);
+                    assignments.put(assignedWorker, workerTasks);
+                } 
+                System.out.println(String.format("Task assignment to %s for task %s from %02d:%02d to %s",
                 	assignedWorker.getSeniority(),
-                    assignedWorker.getName(),
+                    //assignedWorker.getName(),
                     task.getName(),
                     task.getStart().getHours(),
                     task.getStart().getMinutes(),
@@ -170,7 +177,7 @@ public class AutoTPS {
     private Worker findAvailableWorker(List<Worker> workers, SeniorityLevel seniorityLevel, Task task) {
         //  worker availability logic
         for (Worker worker : workers) {
-            if (worker.getSeniority().equals(seniorityLevel) && worker.getIsActive().equals("True")) {
+            if (worker.getSeniority().equals(seniorityLevel) && worker.getIsActive().toString().equals("True")) {
                 // the worker is available during the time slot
             	if (isWorkerAvailable(worker, task)) {
                 	return worker;
@@ -192,8 +199,8 @@ public class AutoTPS {
 	}
 
 	private boolean isOverlapping(Task t1, Task t2) {
-		String t1Start = t1.getStart().toString();
-		String t2Start = t2.getStart().toString();
+		String t1Start = t1.getStart().getHours() + ":" + t1.getStart().getMinutes();
+		String t2Start = t2.getStart().getHours() + ":" + t2.getStart().getMinutes();
 		String t1End = calculateEndTime(t1);
 		String t2End = calculateEndTime(t2);
 		
