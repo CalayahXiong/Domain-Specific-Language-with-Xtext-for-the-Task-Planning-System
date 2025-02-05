@@ -111,4 +111,33 @@ public class MyDslValidator extends AbstractMyDslValidator {
                   "DUPLICATE_EMPLOYEE_ID");
         }
     }
+    
+ // Rule to check task is within one shift
+    @Check
+    public void checkTaskIsInOneShift(Task task) {
+        final int DAY_SHIFT_START = 6 * 60;    
+        final int EVENING_SHIFT_START = 14 * 60; 
+        final int NIGHT_SHIFT_START = 22 * 60;  
+
+        int startHours = task.getStart().getHours();
+        int startMinutes = task.getStart().getMinutes();
+        int startTime = startHours * 60 + startMinutes;
+
+        int endTime = (startTime + task.getDuration()) % (24 * 60);
+
+        boolean isValid = false;
+
+        if (startTime >= DAY_SHIFT_START && startTime < EVENING_SHIFT_START) {
+            isValid = endTime >= DAY_SHIFT_START && endTime < EVENING_SHIFT_START;
+        } else if (startTime >= EVENING_SHIFT_START && startTime < NIGHT_SHIFT_START) {
+            isValid = endTime >= EVENING_SHIFT_START && endTime < NIGHT_SHIFT_START;
+        } else {
+            isValid = (endTime >= NIGHT_SHIFT_START) || (endTime < DAY_SHIFT_START);
+        }
+
+        if (!isValid) {
+            error("Task " + task.getName() + " is not within one shift.",
+                  null); 
+        }
+    }
 }
