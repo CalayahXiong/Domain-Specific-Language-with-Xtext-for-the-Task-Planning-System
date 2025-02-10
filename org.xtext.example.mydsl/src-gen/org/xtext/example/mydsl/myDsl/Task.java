@@ -116,5 +116,7 @@ public interface Task extends EObject
    * @generated
    */
   void setStart(TIME value);
+  
+  String getShift();
 
 } // Task

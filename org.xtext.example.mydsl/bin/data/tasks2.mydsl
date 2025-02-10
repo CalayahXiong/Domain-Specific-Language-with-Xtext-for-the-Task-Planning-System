@@ -40,6 +40,12 @@ task T4 {
     start = 18:00;
 }
 
+task T5 {
+    difficulty = easy;
+    duration = 120;
+    start = 10:30;
+}
+
 if (> 150 min OR hard) then senior;
 if ((easy AND < 180 min) OR dayshift) then trainee;
 

@@ -34,6 +34,11 @@ task T3 {
     start = 00:00;
 }
 
+<<<<<<< HEAD
 if (> 150 min OR hard) then senior;
 if ((easy AND < 180 min) OR dayshift) then trainee;
+=======
+if(>150 min OR hard)then senior;
+if((easy AND < 180 min) OR dayshift) then trainee;
+>>>>>>> c44db50c0cacb75f88367147c11a37c84973924c
 

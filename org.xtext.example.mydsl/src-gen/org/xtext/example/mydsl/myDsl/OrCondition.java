@@ -66,5 +66,6 @@ public interface OrCondition extends Condition
    * @generated
    */
   void setRight(Condition value);
+  
 
 } // OrCondition

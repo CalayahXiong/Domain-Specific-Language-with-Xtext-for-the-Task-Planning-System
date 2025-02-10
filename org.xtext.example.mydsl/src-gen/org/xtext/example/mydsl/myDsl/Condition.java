@@ -17,4 +17,8 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface Condition extends EObject
 {
+	/**
+	 * @generated NOT
+	 */
+    boolean evaluate(Task task);
 } // Condition

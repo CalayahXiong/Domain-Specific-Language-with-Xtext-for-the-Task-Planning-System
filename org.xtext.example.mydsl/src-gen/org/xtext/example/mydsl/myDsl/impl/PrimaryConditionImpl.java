@@ -14,7 +14,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.xtext.example.mydsl.myDsl.Condition;
 import org.xtext.example.mydsl.myDsl.MyDslPackage;
 import org.xtext.example.mydsl.myDsl.PrimaryCondition;
-
+import org.xtext.example.mydsl.myDsl.Task;
 /**
  * <!-- begin-user-doc -->
  * An implementation of the model object '<em><b>Primary Condition</b></em>'.
@@ -192,5 +192,12 @@ public class PrimaryConditionImpl extends ConditionImpl implements PrimaryCondit
     }
     return super.eIsSet(featureID);
   }
+  
+  /**
+   * @generated NOT
+   */
+  public boolean evaluate(Task task) {
+	    return getInner().evaluate(task);
+	}
 
 } //PrimaryConditionImpl

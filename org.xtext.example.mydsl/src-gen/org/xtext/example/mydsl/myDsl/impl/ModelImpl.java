@@ -3,7 +3,10 @@
  */
 package org.xtext.example.mydsl.myDsl.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.*;
 
 import org.eclipse.emf.common.notify.NotificationChain;
 
@@ -20,6 +23,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
 import org.xtext.example.mydsl.myDsl.Model;
 import org.xtext.example.mydsl.myDsl.MyDslPackage;
 import org.xtext.example.mydsl.myDsl.Rule;
+import org.xtext.example.mydsl.myDsl.SeniorityLevel;
 import org.xtext.example.mydsl.myDsl.Task;
 import org.xtext.example.mydsl.myDsl.Worker;
 
@@ -69,6 +73,8 @@ public class ModelImpl extends MinimalEObjectImpl.Container implements Model
    * @ordered
    */
   protected EList<Rule> rules;
+  
+  private final Map<Worker, List<Task>> assignments = new HashMap<>();
 
   /**
    * <!-- begin-user-doc -->
@@ -244,6 +250,168 @@ public class ModelImpl extends MinimalEObjectImpl.Container implements Model
         return rules != null && !rules.isEmpty();
     }
     return super.eIsSet(featureID);
+  }
+  
+  /**
+   * @generated NOT
+   */
+  public void evaluate() {
+      List<Task> tasks = getTasks();
+      List<Worker> workers = getWorkers();
+      List<Rule> rules = getRules();
+
+      assignments.clear(); //initialize
+      
+      // For each task, try to assign it
+      for (Task task : tasks) {
+          boolean taskAssigned = false;
+          boolean ruleMatched = false;
+          
+          // Process each rule
+          for (Rule rule : rules) {
+              if (ruleMatchesTask(rule, task)) {
+                  ruleMatched = true;
+                  // Find all candidate workers: active and with required seniority.
+                  List<Worker> candidates = new ArrayList<>();
+                  for (Worker worker : workers) {
+                      if (worker.getSeniority().equals(rule.getAssign())
+                              && worker.getIsActive().toString().equals("True")) {
+                          candidates.add(worker);
+                      }
+                  }
+                  
+                  // no active worker with required seniority exists
+                  if (candidates.isEmpty()) {
+                      System.out.println(String.format("Task assignment for task %s not possible (all conditions false / no active worker with required seniority exists).", task.getName()));
+                      taskAssigned = true;  // consider the task as "processed"
+                      break; 
+                  }
+                  
+                  // have possible employees, the check candidates for availability
+                  for (Worker candidate : candidates) {
+                      if (isWorkerAvailable(candidate, task)) {
+                          // Candidate is available; assign the task.
+                          taskAssigned = true;
+                          if (assignments.containsKey(candidate)) {
+                              assignments.get(candidate).add(task);
+                          } else {
+                              List<Task> candidateTasks = new ArrayList<>();
+                              candidateTasks.add(task);
+                              assignments.put(candidate, candidateTasks);
+                          }
+                          System.out.println(String.format(
+                              "Task assignment to %s %s for task %s from %02d:%02d to %s.",
+                              candidate.getSeniority(),
+                              candidate.getName(),  
+                              task.getName(),
+                              task.getStart().getHours(),
+                              task.getStart().getMinutes(),
+                              calculateEndTime(task)));
+                          break; 
+                      } else {
+                          // Candidate is not available; find the overlapping task. //!!! traversing all overlapping ones
+                          List<Task> overlappingTasks = getOverlappingTasks(candidate, task);
+                          if(overlappingTasks!=null) {
+                          	for (Task ot : overlappingTasks) {
+                          		System.out.println(String.format(
+                                          "Task assignment to %s for task %s not possible from %02d:%02d to %s due to %s.",
+                                          candidate.getSeniority(),
+                                          task.getName(),
+                                          task.getStart().getHours(),
+                                          task.getStart().getMinutes(),
+                                          calculateEndTime(ot),
+                                          ot.getName()));
+                          	}
+                          }
+                          
+                      }
+                  }
+                  if (taskAssigned) {
+                      break;
+                  }
+              }
+          }
+          // If no rule matched the task or if no candidate worker was found/available,
+          if (!taskAssigned && !ruleMatched) {
+              System.out.println(String.format("Task assignment for task %s not possible (all conditions false / no active worker with required seniority exists).", task.getName()));
+          }
+      }
+  }
+  
+  private boolean ruleMatchesTask(Rule rule, Task task) {
+      // Get the condition from the rule
+      //Condition condition = rule.getCondition();
+
+      // Evaluate the condition recursively
+      //return evaluateCondition(condition, task);
+      return rule.getCondition().evaluate(task);
+  }
+  
+  private Worker findAvailableWorker(List<Worker> workers, SeniorityLevel seniorityLevel, Task task) {
+      //  worker availability logic
+      for (Worker worker : workers) {
+          if (worker.getSeniority().equals(seniorityLevel) && worker.getIsActive().toString().equals("True")) {
+              // the worker is available during the time slot
+          	if (isWorkerAvailable(worker, task)) {
+              	return worker;
+              }
+          }
+      }
+      return null;
+  }
+  
+  private boolean isWorkerAvailable(Worker worker, Task task) {
+		//
+  	List<Task> assignedTasks = assignments.getOrDefault(worker, new ArrayList<>());
+  	for (Task assignedTask : assignedTasks) {
+  		if (isOverlapping(assignedTask, task)) {
+  			return false;
+  		}
+  	}
+		return true;
+	}
+
+	private boolean isOverlapping(Task t1, Task t2) {
+		String t1Start = t1.getStart().getHours() + ":" + t1.getStart().getMinutes();
+		String t2Start = t2.getStart().getHours() + ":" + t2.getStart().getMinutes();
+		String t1End = calculateEndTime(t1);
+		String t2End = calculateEndTime(t2);
+		
+		return t1End.compareTo(t2Start) > 0 || t2End.compareTo(t1Start)> 0;		
+	}
+	
+	private List<Task> getOverlappingTasks(Worker worker, Task t) {
+		List<Task> assignedTasks = assignments.getOrDefault(worker, new ArrayList<>());
+		List<Task> overlappingTasks = new ArrayList<>();
+		for (Task assignedTask : assignedTasks) {
+			if (isOverlapping(assignedTask, t)) {
+				//return assignedTask;
+				overlappingTasks.add(assignedTask);
+			}
+		}
+		return overlappingTasks;
+
+	}
+
+
+	private String calculateEndTime(Task task) {
+      // Calculate the end time of the task based on its start time and duration
+      //String[] parts = task.getStart().toString().split(":");
+      int hours = task.getStart().getHours();
+      int minutes = task.getStart().getMinutes();
+
+      int durationHours = task.getDuration() / 60;
+      int durationMinutes = task.getDuration() % 60;
+
+      hours += durationHours;
+      minutes += durationMinutes;
+
+      while (minutes >= 60) {
+          hours += 1;
+          minutes -= 60;
+      }
+
+      return String.format("%02d:%02d", hours, minutes);
   }
 
 } //ModelImpl

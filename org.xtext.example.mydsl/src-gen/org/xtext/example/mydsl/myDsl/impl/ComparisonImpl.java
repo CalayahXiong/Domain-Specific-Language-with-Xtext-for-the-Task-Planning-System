@@ -11,6 +11,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 import org.xtext.example.mydsl.myDsl.Comparison;
 import org.xtext.example.mydsl.myDsl.MyDslPackage;
+import org.xtext.example.mydsl.myDsl.Task;
 
 /**
  * <!-- begin-user-doc -->
@@ -232,6 +233,24 @@ public class ComparisonImpl extends ConditionImpl implements Comparison
     result.append(duration);
     result.append(')');
     return result.toString();
+  }
+  
+  /**
+   * @generated NOT
+   */
+  public boolean evaluate(Task task) {
+	  int taskDuration = task.getDuration();
+	    int duration = getDuration();
+	    String operator = getOperator();
+	    
+	    switch (operator) {
+	        case ">": return taskDuration > duration;
+	        case "<": return taskDuration < duration;
+	        case ">=": return taskDuration >= duration;
+	        case "<=": return taskDuration <= duration;
+	        case "=": return taskDuration == duration;
+	        default: throw new IllegalArgumentException("Invalid operator: " + operator);
+	    }
   }
 
 } //ComparisonImpl

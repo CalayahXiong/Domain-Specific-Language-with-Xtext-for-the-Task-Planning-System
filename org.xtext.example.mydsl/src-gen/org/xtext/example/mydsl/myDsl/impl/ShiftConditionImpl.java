@@ -12,7 +12,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.xtext.example.mydsl.myDsl.MyDslPackage;
 import org.xtext.example.mydsl.myDsl.Shift;
 import org.xtext.example.mydsl.myDsl.ShiftCondition;
-
+import org.xtext.example.mydsl.myDsl.Task;
 /**
  * <!-- begin-user-doc -->
  * An implementation of the model object '<em><b>Shift Condition</b></em>'.
@@ -176,5 +176,13 @@ public class ShiftConditionImpl extends ConditionImpl implements ShiftCondition
     result.append(')');
     return result.toString();
   }
+  
+  /**
+   * @generated NOT
+   */
+  public boolean evaluate(Task task) {
+	    return getShift().toString().equalsIgnoreCase(task.getShift());
+	}
+
 
 } //ShiftConditionImpl

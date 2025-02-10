@@ -383,5 +383,19 @@ public class TaskImpl extends MinimalEObjectImpl.Container implements Task
     result.append(')');
     return result.toString();
   }
+  
+  /**
+   * @generated NOT
+   */
+  public String getShift() {
+	    int hours = getStart().getHours();
+	    if (hours >= 6 && hours < 14) {
+	        return "dayshift";
+	    } else if (hours >= 14 && hours < 22) {
+	        return "eveningshift";
+	    } else {
+	        return "nightshift";
+	    }
+	}
 
 } //TaskImpl

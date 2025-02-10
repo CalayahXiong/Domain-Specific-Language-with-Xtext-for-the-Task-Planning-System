@@ -12,7 +12,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.xtext.example.mydsl.myDsl.Difficulty;
 import org.xtext.example.mydsl.myDsl.DifficultyCondition;
 import org.xtext.example.mydsl.myDsl.MyDslPackage;
-
+import org.xtext.example.mydsl.myDsl.Task;
 /**
  * <!-- begin-user-doc -->
  * An implementation of the model object '<em><b>Difficulty Condition</b></em>'.
@@ -176,5 +176,12 @@ public class DifficultyConditionImpl extends ConditionImpl implements Difficulty
     result.append(')');
     return result.toString();
   }
+  
+  /**
+   * @generated NOT
+   */
+  public boolean evaluate(Task task) {
+	    return getDifficulty().toString().equalsIgnoreCase(task.getDifficulty().toString());
+	}
 
 } //DifficultyConditionImpl

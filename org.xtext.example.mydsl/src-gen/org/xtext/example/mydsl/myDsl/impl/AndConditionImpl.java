@@ -14,6 +14,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.xtext.example.mydsl.myDsl.AndCondition;
 import org.xtext.example.mydsl.myDsl.Condition;
 import org.xtext.example.mydsl.myDsl.MyDslPackage;
+import org.xtext.example.mydsl.myDsl.Task;
 
 /**
  * <!-- begin-user-doc -->
@@ -264,6 +265,13 @@ public class AndConditionImpl extends ConditionImpl implements AndCondition
         return right != null;
     }
     return super.eIsSet(featureID);
+  }
+  
+  /**
+   * @generated NOT
+   */
+  public boolean evaluate(Task task) {
+	  return getLeft().evaluate(task) && getRight().evaluate(task);
   }
 
 } //AndConditionImpl

@@ -62,5 +62,10 @@ public interface Model extends EObject
    * @generated
    */
   EList<Rule> getRules();
+  
+  /**
+   * @generated NOT
+   */
+  void evaluate();
 
 } // Model

@@ -9,7 +9,7 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 import org.xtext.example.mydsl.myDsl.Condition;
 import org.xtext.example.mydsl.myDsl.MyDslPackage;
-
+import org.xtext.example.mydsl.myDsl.Task;
 /**
  * <!-- begin-user-doc -->
  * An implementation of the model object '<em><b>Condition</b></em>'.
@@ -38,6 +38,13 @@ public class ConditionImpl extends MinimalEObjectImpl.Container implements Condi
   protected EClass eStaticClass()
   {
     return MyDslPackage.Literals.CONDITION;
+  }
+  
+  /**
+   * @generated NOT
+   */
+  public boolean evaluate(Task task) {
+	  throw new UnsupportedOperationException("evaluate must be implemented in subclasses");
   }
 
 } //ConditionImpl
